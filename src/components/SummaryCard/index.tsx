@@ -1,4 +1,5 @@
 import { AiOutlineArrowDown, AiOutlineArrowUp } from "react-icons/ai";
+import { FaArrowDown, FaArrowUp, FaBalanceScale } from "react-icons/fa";
 import {
   Grid,
   GridItem,
@@ -9,8 +10,8 @@ import {
   useColorMode,
 } from "@chakra-ui/react";
 
-import { FaBalanceScale } from "react-icons/fa";
 import React from "react";
+import SummaryItem from "./SummaryItem";
 
 interface Summary {
   totalOutcome: string;
@@ -39,40 +40,28 @@ export default function SummaryCard({ summary }: SummaryProps) {
       px="5"
     >
       <GridItem colSpan={{ sm: 2 }} mx="auto">
-        <Stack direction="row" align="center" spacing="5">
-          <Icon as={FaBalanceScale} fontSize="20" />
-          <Stack direction="column">
-            <Heading fontSize="xl">Balanço</Heading>
-            <Text
-              fontSize="sm"
-              color={summary.balance.charAt(0) === "-" ? "dark.red" : "inherit"}
-            >
-              {summary.balance}
-            </Text>
-          </Stack>
-        </Stack>
+        <SummaryItem
+          title="Balanço"
+          value={summary.balance}
+          icon={FaBalanceScale}
+          color={summary.balance.charAt(0) === "-" ? "dark.red" : "inherit"}
+        />
       </GridItem>
       <GridItem mr="auto">
-        <Stack direction="row" align="center" spacing="5">
-          <Icon as={AiOutlineArrowUp} color="dark.green" fontSize="20" />
-          <Stack direction="column">
-            <Heading fontSize="xl">Receitas</Heading>
-            <Text fontSize="sm" color="dark.green">
-              {summary.totalIncome}
-            </Text>
-          </Stack>
-        </Stack>
+        <SummaryItem
+          title="Receitas"
+          value={summary.totalIncome}
+          icon={FaArrowUp}
+          color="dark.green"
+        />
       </GridItem>
       <GridItem ml="auto">
-        <Stack direction="row" align="center" spacing="5">
-          <Icon as={AiOutlineArrowDown} color="dark.red" fontSize="20" />
-          <Stack direction="column">
-            <Heading fontSize="xl">Receitas</Heading>
-            <Text fontSize="sm" color="dark.red">
-              {summary.totalOutcome}
-            </Text>
-          </Stack>
-        </Stack>
+        <SummaryItem
+          title="Despesas"
+          value={summary.totalOutcome}
+          icon={FaArrowDown}
+          color="dark.red"
+        />
       </GridItem>
     </Grid>
   );

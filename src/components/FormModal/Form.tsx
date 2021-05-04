@@ -79,7 +79,7 @@ export default function Form() {
 
     const response = await api.patch(`/${transaction.id}`, data);
 
-    console.log(response);
+    console.log(response.data);
     disclosure.onClose();
   };
 
