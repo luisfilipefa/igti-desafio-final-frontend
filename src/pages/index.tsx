@@ -1,4 +1,9 @@
-import { AiOutlineArrowDown, AiOutlineArrowUp } from "react-icons/ai";
+import {
+  AiOutlineArrowDown,
+  AiOutlineArrowUp,
+  AiOutlineClose,
+  AiOutlineSearch,
+} from "react-icons/ai";
 import {
   Box,
   Flex,
@@ -11,18 +16,26 @@ import {
 } from "@chakra-ui/layout";
 import { GetServerSideProps, GetStaticProps } from "next";
 import { Icon, MoonIcon, SunIcon } from "@chakra-ui/icons";
+import {
+  Input,
+  InputGroup,
+  InputLeftElement,
+  InputRightElement,
+} from "@chakra-ui/input";
 import { Select, SelectField } from "@chakra-ui/select";
+import { api, getDates, getSummary, getTransactions } from "../services/api";
 import { format, parseISO } from "date-fns";
 import { useEffect, useRef, useState } from "react";
 
 import CardItem from "../components/Transactions/CardItem";
 import CardsContainer from "../components/Transactions/CardsContainer";
+import DateFilter from "../components/Filters/DateFilter";
 import { FaBalanceScale } from "react-icons/fa";
 import Head from "next/head";
 import { IconButton } from "@chakra-ui/button";
 import { Image } from "@chakra-ui/image";
+import Searchbar from "../components/Filters/Searchbar";
 import Summary from "../components/Summary";
-import { api } from "../services/api";
 import { formatCurrency } from "../utils/formatCurrency";
 import ptBR from "date-fns/locale/pt-BR";
 import { useBreakpointValue } from "@chakra-ui/media-query";
@@ -46,6 +59,7 @@ interface Transaction {
 }
 
 interface HomeProps {
+  filter: string;
   transactions: Transaction[];
   dates: string[];
   summary: Summary;
@@ -56,59 +70,42 @@ export default function Home(props: HomeProps) {
   const isDarkMode = colorMode === "dark" ? true : false;
   const isMobile = useBreakpointValue({ sm: true, lg: false });
   const [summary, setSummary] = useState<Summary>(props.summary);
-  const [filter, setFilter] = useState("");
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState(props.filter);
   const [transactions, setTransactions] = useState<Transaction[]>(
     props.transactions
   );
 
-  const calculateSummary = () => {
-    const calc = transactions.reduce(
-      (acc, transaction) => {
-        transaction.type === "+"
-          ? (acc.totalIncome += transaction.value)
-          : (acc.totalOutcome += transaction.value);
+  useEffect(() => {
+    (async () => {
+      if (search !== "") {
+        const filteredTransactions = transactions.filter((transaction) =>
+          transaction.description.toLowerCase().includes(search.toLowerCase())
+        );
+        setTransactions(filteredTransactions);
+        const summary_data = await getSummary(filteredTransactions);
+        setSummary(summary_data);
+      }
 
-        return acc;
-      },
-      { totalIncome: 0, totalOutcome: 0 }
-    );
-
-    const balance = calc.totalIncome - calc.totalOutcome;
-
-    const result = {
-      totalIncome: formatCurrency(calc.totalIncome),
-      totalOutcome: formatCurrency(calc.totalOutcome),
-      balance: formatCurrency(balance),
-    };
-
-    setSummary(result);
-  };
+      if (search === "") {
+        setTransactions(props.transactions);
+        const summary_data = await getSummary(props.transactions);
+        setSummary(summary_data);
+      }
+    })();
+  }, [search]);
 
   useEffect(() => {
     (async () => {
-      if (filter !== "") {
-        const response = await api.get(`?filter=${filter}`);
-
-        const data: Transaction[] = response.data.transactions.map(
-          (transaction) => ({
-            id: transaction._id,
-            description: transaction.description,
-            value: transaction.value,
-            valueAsString: formatCurrency(transaction.value),
-            category: transaction.category ? transaction.category : "",
-            day: transaction.day,
-            date: format(parseISO(transaction.yearMonthDay), "dd/MM/yy", {
-              locale: ptBR,
-            }),
-            type: transaction.type,
-          })
-        );
-
-        setTransactions(data);
-        calculateSummary();
+      if (filter !== "" && filter !== props.filter) {
+        const transactions_data = await getTransactions(filter);
+        setTransactions(transactions_data);
+        const summary_data = await getSummary(transactions_data);
+        setSummary(summary_data);
       } else {
         setTransactions(props.transactions);
-        setSummary(props.summary);
+        const summary_data = await getSummary(props.transactions);
+        setSummary(summary_data);
       }
     })();
   }, [filter]);
@@ -120,24 +117,14 @@ export default function Home(props: HomeProps) {
       </Head>
       <Box w="100%" maxW="1024px" mx="auto" px="2">
         <Summary summary={summary} />
-        <Select
-          placeholder="Filtro"
-          variant="filled"
-          onChange={(event) => setFilter(event.target.value)}
-          w="120px"
-          mx="auto"
-          my="5"
-        >
-          {props.dates.map((date) => (
-            <option
-              key={date}
-              value={date}
-              style={{ backgroundColor: "#282a36" }}
-            >
-              {date}
-            </option>
-          ))}
-        </Select>
+        <SimpleGrid columns={{ sm: 2 }} spacing={{ sm: 3 }} w="100%" my="2">
+          <DateFilter
+            dates={props.dates}
+            filter={filter}
+            setFilter={setFilter}
+          />
+          <Searchbar search={search} setSearch={setSearch} />
+        </SimpleGrid>
         {isMobile ? (
           <CardsContainer>
             {transactions.map((transaction) => (
@@ -156,45 +143,9 @@ export const getServerSideProps: GetServerSideProps = async () => {
   const filter = format(new Date(), "yyyy-MM", {
     locale: ptBR,
   });
+  const transactions = await getTransactions(filter);
+  const dates = await getDates();
+  const summary = getSummary(transactions);
 
-  const transactions_res = await api.get(`?filter=${filter}`);
-  const dates_res = await api.get("/dates");
-
-  const transactions: Transaction[] = transactions_res.data.transactions.map(
-    (transaction) => ({
-      id: transaction._id,
-      description: transaction.description,
-      value: transaction.value,
-      valueAsString: formatCurrency(transaction.value),
-      category: transaction.category ? transaction.category : "",
-      day: transaction.day,
-      date: format(parseISO(transaction.yearMonthDay), "dd/MM/yy", {
-        locale: ptBR,
-      }),
-      type: transaction.type,
-    })
-  );
-
-  const array = dates_res.data.dates.map((item) => item.yearMonth);
-  const set = new Set(array);
-  const dates = Array.from(set);
-
-  const calc = transactions.reduce(
-    (acc, transaction) => {
-      transaction.type === "+"
-        ? (acc.totalIncome += transaction.value)
-        : (acc.totalOutcome += transaction.value);
-
-      return acc;
-    },
-    { totalIncome: 0, totalOutcome: 0 }
-  );
-  const balance = calc.totalIncome - calc.totalOutcome;
-  const summary = {
-    totalIncome: formatCurrency(calc.totalIncome),
-    totalOutcome: formatCurrency(calc.totalOutcome),
-    balance: formatCurrency(balance),
-  };
-
-  return { props: { transactions, dates, summary } };
+  return { props: { filter, transactions, dates, summary } };
 };
