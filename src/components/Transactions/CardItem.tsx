@@ -1,6 +1,6 @@
-import { AiOutlineArrowDown, AiOutlineArrowUp } from "react-icons/ai";
 import { Flex, Icon, Stack, Text, useColorMode } from "@chakra-ui/react";
 
+import { AiOutlineCalendar } from "react-icons/ai";
 import React from "react";
 
 interface Transaction {
@@ -23,22 +23,15 @@ export default function CardItem({ transaction }: CardItemProps) {
 
   return (
     <Flex align="center" justifyContent="space-between">
-      <Stack direction="row" align="center">
-        <Icon
-          as={transaction.type === "+" ? AiOutlineArrowUp : AiOutlineArrowDown}
-          color={
-            isDarkMode
-              ? transaction.type === "+"
-                ? "dark.green"
-                : "dark.red"
-              : ""
-          }
-          fontSize="30"
-        />
+      <Stack direction="row" align="center" spacing="3">
+        <Stack direction="row" align="center" spacing="1">
+          <Icon as={AiOutlineCalendar} />
+          <Text>{transaction.date.split("/")[0]}</Text>
+        </Stack>
         <Stack direction="column">
-          <Text>{transaction.description}</Text>
+          <Text>{transaction.category}</Text>
           <Text fontSize="xs" color={isDarkMode ? "gray.900" : ""}>
-            {transaction.category}
+            {transaction.description}
           </Text>
         </Stack>
       </Stack>

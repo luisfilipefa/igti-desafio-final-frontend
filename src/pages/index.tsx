@@ -1,42 +1,16 @@
-import {
-  AiOutlineArrowDown,
-  AiOutlineArrowUp,
-  AiOutlineClose,
-  AiOutlineSearch,
-} from "react-icons/ai";
-import {
-  Box,
-  Flex,
-  Grid,
-  GridItem,
-  Heading,
-  SimpleGrid,
-  Stack,
-  Text,
-} from "@chakra-ui/layout";
-import { GetServerSideProps, GetStaticProps } from "next";
-import { Icon, MoonIcon, SunIcon } from "@chakra-ui/icons";
-import {
-  Input,
-  InputGroup,
-  InputLeftElement,
-  InputRightElement,
-} from "@chakra-ui/input";
-import { Select, SelectField } from "@chakra-ui/select";
-import { api, getDates, getSummary, getTransactions } from "../services/api";
-import { format, parseISO } from "date-fns";
-import { useEffect, useRef, useState } from "react";
+import { Box, SimpleGrid } from "@chakra-ui/layout";
+import { getDates, getSummary, getTransactions } from "../services/api";
+import { useEffect, useState } from "react";
 
 import CardItem from "../components/Transactions/CardItem";
 import CardsContainer from "../components/Transactions/CardsContainer";
 import DateFilter from "../components/Filters/DateFilter";
-import { FaBalanceScale } from "react-icons/fa";
+import Filters from "../components/Filters";
+import { GetServerSideProps } from "next";
 import Head from "next/head";
-import { IconButton } from "@chakra-ui/button";
-import { Image } from "@chakra-ui/image";
 import Searchbar from "../components/Filters/Searchbar";
 import Summary from "../components/Summary";
-import { formatCurrency } from "../utils/formatCurrency";
+import { format } from "date-fns";
 import ptBR from "date-fns/locale/pt-BR";
 import { useBreakpointValue } from "@chakra-ui/media-query";
 import { useColorMode } from "@chakra-ui/color-mode";
@@ -66,8 +40,6 @@ interface HomeProps {
 }
 
 export default function Home(props: HomeProps) {
-  const { colorMode } = useColorMode();
-  const isDarkMode = colorMode === "dark" ? true : false;
   const isMobile = useBreakpointValue({ sm: true, lg: false });
   const [summary, setSummary] = useState<Summary>(props.summary);
   const [search, setSearch] = useState("");
@@ -117,14 +89,14 @@ export default function Home(props: HomeProps) {
       </Head>
       <Box w="100%" maxW="1024px" mx="auto" px="2">
         <Summary summary={summary} />
-        <SimpleGrid columns={{ sm: 2 }} spacing={{ sm: 3 }} w="100%" my="2">
+        <Filters>
           <DateFilter
             dates={props.dates}
             filter={filter}
             setFilter={setFilter}
           />
           <Searchbar search={search} setSearch={setSearch} />
-        </SimpleGrid>
+        </Filters>
         {isMobile ? (
           <CardsContainer>
             {transactions.map((transaction) => (
