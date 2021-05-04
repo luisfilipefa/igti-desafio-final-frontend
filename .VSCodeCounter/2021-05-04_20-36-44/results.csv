@@ -1,0 +1,20 @@
+"filename", "language", "TypeScript", "TypeScript React", "comment", "blank", "total"
+"/home/luisfilipefa/Desktop/igti-desafio-final/client/src/components/Filters/DateFilter.tsx", "TypeScript React", 0, 25, 0, 5, 30
+"/home/luisfilipefa/Desktop/igti-desafio-final/client/src/components/Filters/Searchbar.tsx", "TypeScript React", 0, 41, 0, 5, 46
+"/home/luisfilipefa/Desktop/igti-desafio-final/client/src/components/Filters/index.tsx", "TypeScript React", 0, 12, 0, 4, 16
+"/home/luisfilipefa/Desktop/igti-desafio-final/client/src/components/FormModal/Form.tsx", "TypeScript React", 0, 150, 0, 13, 163
+"/home/luisfilipefa/Desktop/igti-desafio-final/client/src/components/FormModal/index.tsx", "TypeScript React", 0, 29, 0, 4, 33
+"/home/luisfilipefa/Desktop/igti-desafio-final/client/src/components/Header/index.tsx", "TypeScript React", 0, 34, 0, 4, 38
+"/home/luisfilipefa/Desktop/igti-desafio-final/client/src/components/SummaryCard/index.tsx", "TypeScript React", 0, 74, 0, 6, 80
+"/home/luisfilipefa/Desktop/igti-desafio-final/client/src/components/Transactions/CardItem.tsx", "TypeScript React", 0, 55, 0, 5, 60
+"/home/luisfilipefa/Desktop/igti-desafio-final/client/src/components/Transactions/CardsContainer.tsx", "TypeScript React", 0, 23, 0, 4, 27
+"/home/luisfilipefa/Desktop/igti-desafio-final/client/src/contexts/FormModalContext.tsx", "TypeScript React", 0, 53, 0, 10, 63
+"/home/luisfilipefa/Desktop/igti-desafio-final/client/src/contexts/TransactionsContext.tsx", "TypeScript React", 0, 100, 0, 11, 111
+"/home/luisfilipefa/Desktop/igti-desafio-final/client/src/pages/_app.tsx", "TypeScript React", 0, 20, 0, 3, 23
+"/home/luisfilipefa/Desktop/igti-desafio-final/client/src/pages/_document.tsx", "TypeScript React", 0, 24, 0, 3, 27
+"/home/luisfilipefa/Desktop/igti-desafio-final/client/src/pages/index.tsx", "TypeScript React", 0, 81, 0, 9, 90
+"/home/luisfilipefa/Desktop/igti-desafio-final/client/src/services/api.ts", "TypeScript", 56, 0, 0, 13, 69
+"/home/luisfilipefa/Desktop/igti-desafio-final/client/src/styles/theme.ts", "TypeScript", 46, 0, 0, 8, 54
+"/home/luisfilipefa/Desktop/igti-desafio-final/client/src/types.ts", "TypeScript", 23, 0, 0, 3, 26
+"/home/luisfilipefa/Desktop/igti-desafio-final/client/src/utils/formatCurrency.ts", "TypeScript", 7, 0, 0, 2, 9
+"Total", "-", 132, 721, 0, 112, 965

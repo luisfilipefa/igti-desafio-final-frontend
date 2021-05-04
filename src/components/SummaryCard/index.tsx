@@ -22,7 +22,7 @@ interface SummaryProps {
   summary: Summary;
 }
 
-export default function Summary({ summary }: SummaryProps) {
+export default function SummaryCard({ summary }: SummaryProps) {
   const { colorMode } = useColorMode();
   const isDarkMode = colorMode === "dark" ? true : false;
 

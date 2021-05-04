@@ -7,14 +7,17 @@ import {
   InputLeftElement,
   InputRightElement,
 } from "@chakra-ui/react";
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useEffect } from "react";
 
-interface SearchbarProps {
-  search: string;
-  setSearch: Dispatch<SetStateAction<string>>;
-}
+import { useTransactions } from "../../contexts/TransactionsContext";
 
-export default function Searchbar({ search, setSearch }: SearchbarProps) {
+export default function Searchbar() {
+  const { search, setSearch, handleSearch, clearSearch } = useTransactions();
+
+  useEffect(() => {
+    handleSearch();
+  }, [search]);
+
   return (
     <InputGroup>
       <InputLeftElement
@@ -33,7 +36,7 @@ export default function Searchbar({ search, setSearch }: SearchbarProps) {
             aria-label="Limpar pesquisa"
             icon={<Icon as={AiOutlineClose} />}
             variant="unstyled"
-            onClick={() => setSearch("")}
+            onClick={clearSearch}
           />
         }
       />

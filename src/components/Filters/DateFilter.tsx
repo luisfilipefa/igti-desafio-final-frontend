@@ -1,14 +1,17 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useEffect } from "react";
 
 import { Select } from "@chakra-ui/react";
+import { useTransactions } from "../../contexts/TransactionsContext";
 
-interface DateFilterProps {
-  dates: string[];
-  filter: string;
-  setFilter: Dispatch<SetStateAction<string>>;
-}
+export default function DateFilter() {
+  const { filter, setFilter, dates, handleFilter } = useTransactions();
 
-export default function DateFilter({ dates, filter, setFilter }) {
+  useEffect(() => {
+    (async () => {
+      await handleFilter();
+    })();
+  }, [filter]);
+
   return (
     <Select
       placeholder="Filtro"
