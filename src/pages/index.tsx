@@ -1,4 +1,4 @@
-import { Box, Text } from "@chakra-ui/layout";
+import { Box, Flex, Text } from "@chakra-ui/layout";
 import { LocalTransaction, Summary } from "../types";
 import { getDates, getTransactions } from "../services/api";
 
@@ -9,19 +9,20 @@ import Filters from "../components/Filters";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import Searchbar from "../components/Filters/Searchbar";
-import { Spinner } from "@chakra-ui/spinner";
 import SummaryCard from "../components/SummaryCard";
 import TableItem from "../components/Transactions/TableItem";
 import TransactionsTable from "../components/Transactions/TransactionsTable";
 import { formatDate } from "../utils/formatDate";
+import { toast } from "react-toastify";
 import { useBreakpointValue } from "@chakra-ui/media-query";
 import { useEffect } from "react";
 import { useTransactions } from "../contexts/TransactionsContext";
 
 interface HomeProps {
-  transactions: LocalTransaction[];
-  summary: Summary;
-  dates: string[];
+  transactions?: LocalTransaction[];
+  summary?: Summary;
+  dates?: string[];
+  notFound: boolean;
 }
 
 export default function Home(props: HomeProps) {
@@ -43,7 +44,9 @@ export default function Home(props: HomeProps) {
   };
 
   useEffect(() => {
-    setInitialValues();
+    if (!props.notFound) {
+      setInitialValues();
+    }
   }, []);
 
   return (
@@ -52,23 +55,31 @@ export default function Home(props: HomeProps) {
         <title>Home | LF Money</title>
       </Head>
       <Box maxW="1024px" mx="auto" px="2">
-        <SummaryCard summary={summary} />
-        <Filters>
-          <DateFilter />
-          <Searchbar />
-        </Filters>
-        {isMobile ? (
-          <CardsContainer>
-            {transactions.map((transaction) => (
-              <CardItem key={transaction.id} transaction={transaction} />
-            ))}
-          </CardsContainer>
+        {props.notFound ? (
+          <Flex align="center" justifyContent="center" h="calc(100vh - 8vh)">
+            <Text>Opa, não consegui recuperar os dados!</Text>
+          </Flex>
         ) : (
-          <TransactionsTable>
-            {transactions.map((transaction) => (
-              <TableItem key={transaction.id} transaction={transaction} />
-            ))}
-          </TransactionsTable>
+          <>
+            <SummaryCard summary={summary} />
+            <Filters>
+              <DateFilter />
+              <Searchbar />
+            </Filters>
+            {isMobile ? (
+              <CardsContainer>
+                {transactions.map((transaction) => (
+                  <CardItem key={transaction.id} transaction={transaction} />
+                ))}
+              </CardsContainer>
+            ) : (
+              <TransactionsTable>
+                {transactions.map((transaction) => (
+                  <TableItem key={transaction.id} transaction={transaction} />
+                ))}
+              </TransactionsTable>
+            )}
+          </>
         )}
       </Box>
     </>
@@ -76,9 +87,14 @@ export default function Home(props: HomeProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const filter = formatDate(new Date(), "yyyy-MM");
-  const { transactions, summary } = await getTransactions(filter);
-  const dates = await getDates();
+  try {
+    const filter = formatDate(new Date(), "yyyy-MM");
+    const { transactions, summary } = await getTransactions(filter);
+    const dates = await getDates();
 
-  return { props: { transactions, summary, dates } };
+    return { props: { transactions, summary, dates, notFound: false } };
+  } catch (err) {
+    console.log(err.message);
+    return { props: { notFound: true } };
+  }
 };

@@ -15,6 +15,7 @@ import {
 } from "../services/api";
 
 import { formatDate } from "../utils/formatDate";
+import { toast } from "react-toastify";
 
 interface TransactionsProviderProps {
   children: ReactNode;
@@ -56,10 +57,14 @@ export function TransactionsProvider({ children }: TransactionsProviderProps) {
 
   const updateTransactions = async () => {
     setIsLoading(true);
-    const { transactions, summary } = await getTransactions(filter);
-    setTransactions(transactions);
-    setSummary(summary);
-    setIsLoading(false);
+    try {
+      const { transactions, summary } = await getTransactions(filter);
+      setTransactions(transactions);
+      setSummary(summary);
+      setIsLoading(false);
+    } catch (err) {
+      console.log(err.message);
+    }
   };
 
   const handleSearch = async () => {
@@ -88,24 +93,42 @@ export function TransactionsProvider({ children }: TransactionsProviderProps) {
   };
 
   const handleCreateTransaction = async (transaction: ApiTransaction) => {
-    const response = await createTransaction(transaction);
-    await updateTransactions();
-    console.log(response);
+    try {
+      const response = await createTransaction(transaction);
+      await updateTransactions();
+      console.log(response);
+      toast.success("Transação criada! ☑️");
+    } catch (err) {
+      console.log(err.message);
+      toast.error("Erro ao criar transação! ❌");
+    }
   };
 
   const handleEditTransaction = async (
     id: string,
     transaction: ApiTransaction
   ) => {
-    const response = await editTransaction(id, transaction);
-    await updateTransactions();
-    console.log(response);
+    try {
+      const response = await editTransaction(id, transaction);
+      await updateTransactions();
+      console.log(response);
+      toast.success("Transação editada! ☑️");
+    } catch (err) {
+      console.log(err.message);
+      toast.error("Erro ao editar transação! ❌");
+    }
   };
 
   const handleDeleteTransaction = async (id: string) => {
-    const response = await deleteTransaction(id);
-    await updateTransactions();
-    console.log(response);
+    try {
+      const response = await deleteTransaction(id);
+      await updateTransactions();
+      console.log(response);
+      toast.success("Transação deletada! ☑️");
+    } catch (err) {
+      console.log(err.message);
+      toast.error("Erro ao deletar transação! ❌");
+    }
   };
 
   return (

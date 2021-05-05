@@ -1,4 +1,5 @@
-import { AiOutlineEdit } from "react-icons/ai";
+import { AiOutlineEdit, AiOutlineFileAdd } from "react-icons/ai";
+
 import Icon from "@chakra-ui/icon";
 import { IconButton } from "@chakra-ui/button";
 import { LocalTransaction } from "../../types";
@@ -22,7 +23,7 @@ export default function OpenModalButton({
   return (
     <IconButton
       aria-label={mode === "editing" ? "Editar transação" : "Criar transação"}
-      icon={<Icon as={AiOutlineEdit} />}
+      icon={<Icon as={mode === "editing" ? AiOutlineEdit : AiOutlineFileAdd} />}
       bg={isDarkMode ? "dark.blue" : "dark.orange"}
       color={isDarkMode ? "dark.gray.50" : "dark.gray.900"}
       size={mode === "editing" ? "xs" : "md"}
