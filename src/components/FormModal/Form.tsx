@@ -1,26 +1,14 @@
-import * as yup from "yup";
-
-import { ApiTransaction, LocalTransaction } from "../../types";
-import {
-  Box,
-  Button,
-  FormControl,
-  FormErrorMessage,
-  Input,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  Select,
-  SimpleGrid,
-  Stack,
-} from "@chakra-ui/react";
+import { Box, Button, SimpleGrid, Stack } from "@chakra-ui/react";
 import React, { useEffect } from "react";
 import { createTransaction, editTransaction } from "../../services/api";
 
-import { formatCurrency } from "../../utils/formatCurrency";
+import { ApiTransaction } from "../../types";
+import { Input } from "./Input";
+import ModalFooter from "./ModalFooter";
+import { NumberInput } from "./NumberInput";
+import { Select } from "./Select";
 import { formatDate } from "../../utils/formatDate";
+import { schema } from "./yupConfig";
 import { useForm } from "react-hook-form";
 import { useFormModal } from "../../contexts/FormModalContext";
 import { useTransactions } from "../../contexts/TransactionsContext";
@@ -36,21 +24,13 @@ interface FormValues {
 
 export default function Form() {
   const { disclosure, mode, transaction } = useFormModal();
-  const { transactions, updateTransactions } = useTransactions();
-
-  const schema = yup.object().shape({
-    description: yup.string().required(),
-    category: yup.string().required(),
-    type: yup.string().required(),
-    date: yup.date().required(),
-    value: yup.number().positive().required(),
-  });
+  const { updateTransactions } = useTransactions();
 
   const {
     register,
     handleSubmit,
     setValue,
-    formState: { isSubmitting, errors },
+    formState: { errors },
   } = useForm({ resolver: yupResolver(schema) });
 
   useEffect(() => {
@@ -70,16 +50,10 @@ export default function Form() {
       category: values.category,
       year: Number(formatDate(values.date, "yyyy")),
       month: Number(formatDate(values.date, "MM")),
-      day: Number(formatDate(values.date, "D")),
+      day: Number(formatDate(values.date, "d")),
       yearMonth: formatDate(values.date, "yyyy-MM"),
       yearMonthDay: formatDate(values.date, "yyyy-MM-dd"),
       type: values.type,
-    };
-
-    const localData: LocalTransaction = {
-      ...data,
-      valueAsString: formatCurrency(data.value),
-      dateAsString: formatDate(data.yearMonthDay, "dd/MM/yyyy"),
     };
 
     if (mode === "editing") {
@@ -98,76 +72,47 @@ export default function Form() {
   return (
     <Box as="form" onSubmit={handleSubmit(onSubmit)}>
       <Stack direction="column" spacing="5">
-        <FormControl isInvalid={!!errors.description}>
+        <Input
+          name="description"
+          error={errors.description}
+          placeholder={mode === "creating" && "Descrição"}
+          {...register("description")}
+        />
+        <Input
+          name="category"
+          error={errors.category}
+          placeholder={mode === "creating" && "Categoria"}
+          {...register("category")}
+        />
+        <Stack direction="row" spacing="1">
+          <Select
+            name="type"
+            error={errors.type}
+            placeholder={mode === "creating" && "Tipo"}
+            {...register("type")}
+          >
+            <option value="-" style={{ backgroundColor: "#282a36" }}>
+              Despesa
+            </option>
+            <option value="+" style={{ backgroundColor: "#282a36" }}>
+              Receita
+            </option>
+          </Select>
           <Input
-            id="description"
-            name="description"
-            placeholder="Descrição"
-            {...register("description")}
+            name="date"
+            error={errors.date}
+            type="date"
+            {...register("date")}
           />
-          <FormErrorMessage>{errors.description?.message}</FormErrorMessage>
-        </FormControl>
-        <FormControl isInvalid={!!errors.category}>
-          <Input
-            id="category"
-            name="category"
-            placeholder="Categoria"
-            {...register("category")}
-          />
-          <FormErrorMessage>{errors.category?.message}</FormErrorMessage>
-        </FormControl>
-        <SimpleGrid columns={2} columnGap={1}>
-          <FormControl isInvalid={!!errors.type}>
-            <Select
-              id="type"
-              name="type"
-              placeholder="Tipo"
-              {...register("type")}
-              isReadOnly={mode === "editing" && true}
-            >
-              <option value="-" style={{ backgroundColor: "#282a36" }}>
-                Despesa
-              </option>
-              <option value="+" style={{ backgroundColor: "#282a36" }}>
-                Receita
-              </option>
-            </Select>
-            <FormErrorMessage>{errors.type?.message}</FormErrorMessage>
-          </FormControl>
-          <FormControl isInvalid={!!errors.date}>
-            <Input id="date" name="date" type="date" {...register("date")} />
-            <FormErrorMessage>{errors.date?.message}</FormErrorMessage>
-          </FormControl>
-        </SimpleGrid>
-        <FormControl isInvalid={!!errors.value}>
-          <NumberInput min={1}>
-            <NumberInputField
-              id="value"
-              name="value"
-              placeholder="15.99"
-              {...register("value")}
-            />
-            <NumberInputStepper>
-              <NumberIncrementStepper />
-              <NumberDecrementStepper />
-            </NumberInputStepper>
-          </NumberInput>
-          <FormErrorMessage>{errors.value?.message}</FormErrorMessage>
-        </FormControl>
+        </Stack>
+        <NumberInput
+          name="value"
+          error={errors.value}
+          placeholder={mode === "creating" && "15.99"}
+          {...register("value")}
+        />
       </Stack>
-      <Stack direction="row" spacing="10" mt="8" mb="3" align="center">
-        <Button
-          type="submit"
-          colorScheme="green"
-          ml="auto"
-          isLoading={isSubmitting}
-        >
-          {mode === "creating" ? "Criar" : "Salvar"}
-        </Button>
-        <Button variant="ghost" onClick={disclosure.onClose}>
-          Cancelar
-        </Button>
-      </Stack>
+      <ModalFooter />
     </Box>
   );
 }
