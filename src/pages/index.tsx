@@ -11,8 +11,7 @@ import Head from "next/head";
 import Searchbar from "../components/Filters/Searchbar";
 import { Spinner } from "@chakra-ui/spinner";
 import SummaryCard from "../components/SummaryCard";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { formatDate } from "../utils/formatDate";
 import { useBreakpointValue } from "@chakra-ui/media-query";
 import { useEffect } from "react";
 import { useTransactions } from "../contexts/TransactionsContext";
@@ -78,9 +77,7 @@ export default function Home(props: HomeProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const filter = format(new Date(), "yyyy-MM", {
-    locale: ptBR,
-  });
+  const filter = formatDate(new Date(), "yyyy-MM");
   const transactions = await getTransactions(filter);
   const summary = getSummary(transactions);
   const dates = await getDates();

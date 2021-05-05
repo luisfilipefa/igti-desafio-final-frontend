@@ -1,9 +1,9 @@
 import * as yup from "yup";
 
+import { ApiTransaction, LocalTransaction } from "../../types";
 import {
   Box,
   Button,
-  Flex,
   FormControl,
   FormErrorMessage,
   Input,
@@ -13,16 +13,17 @@ import {
   NumberInputField,
   NumberInputStepper,
   Select,
+  SimpleGrid,
   Stack,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import { createTransaction, editTransaction } from "../../services/api";
 
-import { ApiTransaction } from "../../types";
-import { api } from "../../services/api";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { formatCurrency } from "../../utils/formatCurrency";
+import { formatDate } from "../../utils/formatDate";
 import { useForm } from "react-hook-form";
 import { useFormModal } from "../../contexts/FormModalContext";
+import { useTransactions } from "../../contexts/TransactionsContext";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 interface FormValues {
@@ -35,6 +36,7 @@ interface FormValues {
 
 export default function Form() {
   const { disclosure, mode, transaction } = useFormModal();
+  const { transactions, updateTransactions } = useTransactions();
 
   const schema = yup.object().shape({
     description: yup.string().required(),
@@ -62,24 +64,34 @@ export default function Form() {
   }, []);
 
   const onSubmit = async (values: FormValues) => {
-    console.log("submit");
-    const { description, category, type, date, value } = values;
-
     const data: ApiTransaction = {
-      description,
-      value,
-      category,
-      year: Number(format(date, "yyyy", { locale: ptBR })),
-      month: Number(format(date, "MM", { locale: ptBR })),
-      day: Number(format(date, "d", { locale: ptBR })),
-      yearMonth: format(date, "yyyy-MM", { locale: ptBR }),
-      yearMonthDay: format(date, "yyyy-MM-dd", { locale: ptBR }),
-      type,
+      description: values.description,
+      value: values.value,
+      category: values.category,
+      year: Number(formatDate(values.date, "yyyy")),
+      month: Number(formatDate(values.date, "MM")),
+      day: Number(formatDate(values.date, "D")),
+      yearMonth: formatDate(values.date, "yyyy-MM"),
+      yearMonthDay: formatDate(values.date, "yyyy-MM-dd"),
+      type: values.type,
     };
 
-    const response = await api.patch(`/${transaction.id}`, data);
+    const localData: LocalTransaction = {
+      ...data,
+      valueAsString: formatCurrency(data.value),
+      dateAsString: formatDate(data.yearMonthDay, "dd/MM/yyyy"),
+    };
 
-    console.log(response.data);
+    if (mode === "editing") {
+      const response = await editTransaction(transaction.id, data);
+      console.log(response);
+    } else {
+      const response = await createTransaction(data);
+      console.log(response);
+    }
+
+    updateTransactions();
+
     disclosure.onClose();
   };
 
@@ -104,7 +116,7 @@ export default function Form() {
           />
           <FormErrorMessage>{errors.category?.message}</FormErrorMessage>
         </FormControl>
-        <Flex align="center" justifyContent="space-around">
+        <SimpleGrid columns={2} columnGap={1}>
           <FormControl isInvalid={!!errors.type}>
             <Select
               id="type"
@@ -122,27 +134,26 @@ export default function Form() {
             </Select>
             <FormErrorMessage>{errors.type?.message}</FormErrorMessage>
           </FormControl>
-        </Flex>
-        <Stack direction="row" align="center" spacing="2">
           <FormControl isInvalid={!!errors.date}>
             <Input id="date" name="date" type="date" {...register("date")} />
             <FormErrorMessage>{errors.date?.message}</FormErrorMessage>
           </FormControl>
-          <FormControl isInvalid={!!errors.value}>
-            <NumberInput min={1}>
-              <NumberInputField
-                id="value"
-                name="value"
-                {...register("value")}
-              />
-              <NumberInputStepper>
-                <NumberIncrementStepper />
-                <NumberDecrementStepper />
-              </NumberInputStepper>
-            </NumberInput>
-            <FormErrorMessage>{errors.value?.message}</FormErrorMessage>
-          </FormControl>
-        </Stack>
+        </SimpleGrid>
+        <FormControl isInvalid={!!errors.value}>
+          <NumberInput min={1}>
+            <NumberInputField
+              id="value"
+              name="value"
+              placeholder="15.99"
+              {...register("value")}
+            />
+            <NumberInputStepper>
+              <NumberIncrementStepper />
+              <NumberDecrementStepper />
+            </NumberInputStepper>
+          </NumberInput>
+          <FormErrorMessage>{errors.value?.message}</FormErrorMessage>
+        </FormControl>
       </Stack>
       <Stack direction="row" spacing="10" mt="8" mb="3" align="center">
         <Button

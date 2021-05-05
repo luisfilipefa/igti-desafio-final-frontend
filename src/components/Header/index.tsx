@@ -2,6 +2,7 @@ import { Box, Flex, Icon, IconButton, useColorMode } from "@chakra-ui/react";
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 
 import { GiPiggyBank } from "react-icons/gi";
+import OpenModalButton from "../OpenModalButton";
 import React from "react";
 
 export default function Header() {
@@ -26,6 +27,7 @@ export default function Header() {
             color={isDarkMode ? "dark.purple" : ""}
           />
         </Box>
+        <OpenModalButton mode="creating" />
         <IconButton
           aria-label="Mudar modo de cor"
           icon={<Icon as={isDarkMode ? SunIcon : MoonIcon} />}

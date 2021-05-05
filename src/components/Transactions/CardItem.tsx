@@ -1,16 +1,9 @@
-import { AiOutlineCalendar, AiOutlineEdit } from "react-icons/ai";
-import {
-  Flex,
-  Icon,
-  IconButton,
-  Stack,
-  Text,
-  useColorMode,
-} from "@chakra-ui/react";
+import { Flex, Icon, Stack, Text, useColorMode } from "@chakra-ui/react";
 
+import { AiOutlineCalendar } from "react-icons/ai";
 import { LocalTransaction } from "../../types";
+import OpenModalButton from "../OpenModalButton";
 import React from "react";
-import { useFormModal } from "../../contexts/FormModalContext";
 
 interface CardItemProps {
   transaction: LocalTransaction;
@@ -19,7 +12,6 @@ interface CardItemProps {
 export default function CardItem({ transaction }: CardItemProps) {
   const { colorMode } = useColorMode();
   const isDarkMode = colorMode === "dark" ? true : false;
-  const { disclosure, editingMode } = useFormModal();
 
   return (
     <Flex align="center" justifyContent="space-between">
@@ -48,12 +40,7 @@ export default function CardItem({ transaction }: CardItemProps) {
       >
         {transaction.valueAsString}
       </Text>
-      <IconButton
-        aria-label="Editar transação"
-        icon={<Icon as={AiOutlineEdit} />}
-        size="xs"
-        onClick={() => editingMode(transaction)}
-      />
+      <OpenModalButton mode="editing" transaction={transaction} />
     </Flex>
   );
 }

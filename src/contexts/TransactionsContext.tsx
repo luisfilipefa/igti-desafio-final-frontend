@@ -4,14 +4,12 @@ import {
   SetStateAction,
   createContext,
   useContext,
-  useEffect,
   useState,
 } from "react";
 import { LocalTransaction, Summary } from "../types";
-import { getDates, getSummary, getTransactions } from "../services/api";
+import { getSummary, getTransactions } from "../services/api";
 
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { formatDate } from "../utils/formatDate";
 
 interface TransactionsProviderProps {
   children: ReactNode;
@@ -34,6 +32,7 @@ interface TransactionsContextData {
   handleFilter: () => void;
   clearSearch: () => void;
   clearFilter: () => void;
+  updateTransactions: () => void;
 }
 
 const TransactionsContext = createContext({} as TransactionsContextData);
@@ -42,7 +41,7 @@ export function TransactionsProvider({ children }: TransactionsProviderProps) {
   const [transactions, setTransactions] = useState<LocalTransaction[]>([]);
   const [summary, setSummary] = useState<Summary>({} as Summary);
   const [dates, setDates] = useState<string[]>([]);
-  const defaultFilter = format(new Date(), "yyyy-MM", { locale: ptBR });
+  const defaultFilter = formatDate(new Date(), "yyyy-MM");
   const [filter, setFilter] = useState(defaultFilter);
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -73,12 +72,18 @@ export function TransactionsProvider({ children }: TransactionsProviderProps) {
     const summary_data = getSummary(transactions);
     setSummary(summary_data);
   };
+
   const clearFilter = async () => {
     setFilter(defaultFilter);
     const transactions_data = await getTransactions(filter);
     setTransactions(transactions_data);
     const summary_data = getSummary(transactions_data);
     setSummary(summary_data);
+  };
+
+  const updateTransactions = async () => {
+    const transactions_res = await getTransactions(filter);
+    setTransactions(transactions_res);
   };
 
   return (
@@ -100,6 +105,7 @@ export function TransactionsProvider({ children }: TransactionsProviderProps) {
         handleFilter,
         clearSearch,
         clearFilter,
+        updateTransactions,
       }}
     >
       {children}

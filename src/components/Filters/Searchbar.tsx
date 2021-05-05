@@ -7,7 +7,7 @@ import {
   InputLeftElement,
   InputRightElement,
 } from "@chakra-ui/react";
-import React, { Dispatch, SetStateAction, useEffect } from "react";
+import React, { useEffect } from "react";
 
 import { useTransactions } from "../../contexts/TransactionsContext";
 

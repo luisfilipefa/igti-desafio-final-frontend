@@ -1,14 +1,5 @@
-import { AiOutlineArrowDown, AiOutlineArrowUp } from "react-icons/ai";
 import { FaArrowDown, FaArrowUp, FaBalanceScale } from "react-icons/fa";
-import {
-  Grid,
-  GridItem,
-  Heading,
-  Icon,
-  Stack,
-  Text,
-  useColorMode,
-} from "@chakra-ui/react";
+import { Grid, GridItem, useColorMode } from "@chakra-ui/react";
 
 import React from "react";
 import SummaryItem from "./SummaryItem";

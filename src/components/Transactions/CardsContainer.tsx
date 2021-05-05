@@ -5,7 +5,7 @@ interface CardsContainerProps {
   children: ReactNode;
 }
 
-export default function CardsContainer({ children }) {
+export default function CardsContainer({ children }: CardsContainerProps) {
   const { colorMode } = useColorMode();
   const isDarkMode = colorMode === "dark" ? true : false;
 

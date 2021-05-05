@@ -1,13 +1,13 @@
-import { LocalTransaction, Summary } from "../types";
-import { format, parseISO } from "date-fns";
+import { ApiTransaction, LocalTransaction, Summary } from "../types";
 
 import axios from "axios";
 import { formatCurrency } from "../utils/formatCurrency";
+import { formatDate } from "../utils/formatDate";
 import { ptBR } from "date-fns/locale";
 
 const API_URL = process.env.API_URL || "http://localhost:3001/api/transaction";
 
-export const api = axios.create({ baseURL: API_URL });
+const api = axios.create({ baseURL: API_URL });
 
 export const getTransactions = async (filter: string) => {
   const transactions_res = await api.get(`?filter=${filter}`);
@@ -24,9 +24,7 @@ export const getTransactions = async (filter: string) => {
       day: transaction.day,
       yearMonth: transaction.yearMonth,
       yearMonthDay: transaction.yearMonthDay,
-      dateAsString: format(parseISO(transaction.yearMonthDay), "dd/MM/yy", {
-        locale: ptBR,
-      }),
+      dateAsString: formatDate(transaction.yearMonthDay, "dd/MM/yy"),
       type: transaction.type,
     })
   );
@@ -65,4 +63,27 @@ export const getSummary = (transactions: LocalTransaction[]) => {
   };
 
   return summary;
+};
+
+export const editTransaction = async (
+  id: string,
+  transaction: ApiTransaction
+) => {
+  try {
+    const response = await api.patch(`/${id}`, transaction);
+
+    return response.data;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const createTransaction = async (transaction: ApiTransaction) => {
+  try {
+    const response = await api.post("/", transaction);
+
+    return response.data;
+  } catch (err) {
+    console.log(err);
+  }
 };
