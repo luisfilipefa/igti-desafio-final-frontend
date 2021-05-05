@@ -14,7 +14,7 @@ export default function Header() {
       h={{ sm: "8vh", lg: "8vh" }}
       w="100%"
       borderBottom="1px solid"
-      borderColor={isDarkMode ? "dark.purple" : "dark.orange"}
+      borderColor={isDarkMode ? "dark.blue" : "dark.orange"}
     >
       <Flex
         h="100%"
