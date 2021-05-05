@@ -3,6 +3,7 @@ import { ApiTransaction, LocalTransaction, Summary } from "../types";
 import axios from "axios";
 import { formatCurrency } from "../utils/formatCurrency";
 import { formatDate } from "../utils/formatDate";
+import { parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 const API_URL = process.env.API_URL || "http://localhost:3001/api/transaction";
@@ -24,7 +25,7 @@ export const getTransactions = async (filter: string) => {
       day: transaction.day,
       yearMonth: transaction.yearMonth,
       yearMonthDay: transaction.yearMonthDay,
-      dateAsString: formatDate(transaction.yearMonthDay, "dd/MM/yy"),
+      dateAsString: formatDate(parseISO(transaction.yearMonthDay), "dd/MM/yy"),
       type: transaction.type,
     })
   );
