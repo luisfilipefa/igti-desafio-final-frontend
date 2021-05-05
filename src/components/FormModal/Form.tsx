@@ -28,7 +28,6 @@ export default function Form() {
     handleEditTransaction,
     handleCreateTransaction,
     updateTransactions,
-    updateSummary,
   } = useTransactions();
 
   const {
@@ -68,8 +67,6 @@ export default function Form() {
     }
 
     updateTransactions();
-    updateSummary();
-
     disclosure.onClose();
   };
 
