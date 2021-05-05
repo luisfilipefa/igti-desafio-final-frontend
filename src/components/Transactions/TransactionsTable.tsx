@@ -13,7 +13,7 @@ export default function TransactionsTable({
   children,
 }: TransactionsTableProps) {
   return (
-    <Table colorScheme="whiteAlpha">
+    <Table colorScheme="gray" variant="striped">
       <Thead>
         <Tr>
           <Th>

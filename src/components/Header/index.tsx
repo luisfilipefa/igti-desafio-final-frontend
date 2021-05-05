@@ -10,10 +10,15 @@ export default function Header() {
   const isDarkMode = colorMode === "dark" ? true : false;
 
   return (
-    <Box h={{ sm: "8vh" }} w="100vw">
+    <Box
+      h={{ sm: "8vh", md: "10vh" }}
+      w="100%"
+      borderBottom="1px solid"
+      borderColor={isDarkMode ? "dark.purple" : ""}
+    >
       <Flex
         h="100%"
-        maxW={{ lg: "1024px" }}
+        maxW="1024px"
         mx="auto"
         align="center"
         py="2"

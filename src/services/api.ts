@@ -6,7 +6,8 @@ import { formatDate } from "../utils/formatDate";
 import { parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
-const API_URL = process.env.API_URL || "http://localhost:3001/api/transaction";
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api/transaction";
 
 const api = axios.create({ baseURL: API_URL });
 
@@ -30,22 +31,6 @@ export const getTransactions = async (filter: string) => {
     })
   );
 
-  return transactions;
-};
-
-export const getDates = async () => {
-  const dates_res = await api.get("/dates");
-
-  const array: string[] = dates_res.data.dates.map((item) =>
-    item.yearMonth ? item.yearMonth : ""
-  );
-  const set = new Set(array);
-  const dates = Array.from(set);
-
-  return dates;
-};
-
-export const getSummary = (transactions: LocalTransaction[]) => {
   const calc = transactions.reduce(
     (acc, transaction) => {
       transaction.type === "+"
@@ -63,7 +48,19 @@ export const getSummary = (transactions: LocalTransaction[]) => {
     balance: formatCurrency(balance),
   };
 
-  return summary;
+  return { transactions, summary };
+};
+
+export const getDates = async () => {
+  const dates_res = await api.get("/dates");
+
+  const array: string[] = dates_res.data.dates.map((item) =>
+    item.yearMonth ? item.yearMonth : ""
+  );
+  const set = new Set(array);
+  const dates = Array.from(set);
+
+  return dates;
 };
 
 export const editTransaction = async (

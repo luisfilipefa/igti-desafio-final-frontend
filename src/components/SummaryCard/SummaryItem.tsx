@@ -1,4 +1,4 @@
-import { Flex, Heading, Icon, Stack, Text } from "@chakra-ui/react";
+import { Heading, Icon, Stack, Text } from "@chakra-ui/react";
 
 import { IconType } from "react-icons/lib";
 import React from "react";
@@ -17,21 +17,22 @@ export default function SummaryItem({
   color,
 }: SummaryItemProps) {
   return (
-    <Flex
+    <Stack
       direction="row"
       align="center"
-      justifyContent="space-around"
+      justifyContent="center"
+      spacing={{ sm: "3", md: "5" }}
       bg={{ md: "dark.gray.800" }}
-      p="3"
-      borderRadius="full"
+      py={{ sm: "0", md: "3" }}
+      borderRadius="xl"
     >
-      <Icon as={icon} fontSize="20" color={color} mr={{ sm: "3", md: "0" }} />
+      <Icon as={icon} fontSize="20" color={color} />
       <Stack direction="column">
         <Heading fontSize="xl">{title}</Heading>
         <Text fontSize="sm" color={color}>
           {value}
         </Text>
       </Stack>
-    </Flex>
+    </Stack>
   );
 }

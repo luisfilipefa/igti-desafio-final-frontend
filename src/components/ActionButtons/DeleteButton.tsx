@@ -18,7 +18,8 @@ export default function DeleteButton({ transaction }: DeleteButtonProps) {
     <IconButton
       aria-label="Deletar transação"
       icon={<Icon as={FiTrash} />}
-      colorScheme="red"
+      bg="dark.red"
+      color="dark.gray.900"
       size="xs"
       onClick={() => {
         handleDeleteTransaction(transaction.id);

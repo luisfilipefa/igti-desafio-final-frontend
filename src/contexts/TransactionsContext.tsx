@@ -5,14 +5,12 @@ import {
   SetStateAction,
   createContext,
   useContext,
-  useEffect,
   useState,
 } from "react";
 import {
   createTransaction,
   deleteTransaction,
   editTransaction,
-  getSummary,
   getTransactions,
 } from "../services/api";
 
@@ -36,7 +34,6 @@ interface TransactionsContextData {
   isLoading: boolean;
   setIsLoading: Dispatch<SetStateAction<boolean>>;
   updateTransactions: () => void;
-  updateSummary: () => void;
   handleSearch: () => void;
   handleFilter: () => void;
   clearSearch: () => void;
@@ -58,13 +55,11 @@ export function TransactionsProvider({ children }: TransactionsProviderProps) {
   const [isLoading, setIsLoading] = useState(true);
 
   const updateTransactions = async () => {
-    const transactions_data = await getTransactions(filter);
-    setTransactions(transactions_data);
-  };
-
-  const updateSummary = () => {
-    const summary_data = getSummary(transactions);
-    setSummary(summary_data);
+    setIsLoading(true);
+    const { transactions, summary } = await getTransactions(filter);
+    setTransactions(transactions);
+    setSummary(summary);
+    setIsLoading(false);
   };
 
   const handleSearch = async () => {
@@ -113,10 +108,6 @@ export function TransactionsProvider({ children }: TransactionsProviderProps) {
     console.log(response);
   };
 
-  useEffect(() => {
-    updateSummary();
-  }, [transactions]);
-
   return (
     <TransactionsContext.Provider
       value={{
@@ -133,7 +124,6 @@ export function TransactionsProvider({ children }: TransactionsProviderProps) {
         isLoading,
         setIsLoading,
         updateTransactions,
-        updateSummary,
         handleSearch,
         handleFilter,
         clearSearch,

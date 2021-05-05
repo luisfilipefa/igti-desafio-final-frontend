@@ -1,6 +1,6 @@
 import { Box, Text } from "@chakra-ui/layout";
 import { LocalTransaction, Summary } from "../types";
-import { getDates, getSummary, getTransactions } from "../services/api";
+import { getDates, getTransactions } from "../services/api";
 
 import CardItem from "../components/Transactions/CardItem";
 import CardsContainer from "../components/Transactions/CardsContainer";
@@ -32,7 +32,6 @@ export default function Home(props: HomeProps) {
     summary,
     setSummary,
     setDates,
-    isLoading,
     setIsLoading,
   } = useTransactions();
 
@@ -52,30 +51,24 @@ export default function Home(props: HomeProps) {
       <Head>
         <title>Home | LF Money</title>
       </Head>
-      <Box w="100%" maxW="1024px" mx="auto" px="2">
-        {isLoading ? (
-          <Spinner />
+      <Box maxW="1024px" mx="auto" px="2">
+        <SummaryCard summary={summary} />
+        <Filters>
+          <DateFilter />
+          <Searchbar />
+        </Filters>
+        {isMobile ? (
+          <CardsContainer>
+            {transactions.map((transaction) => (
+              <CardItem key={transaction.id} transaction={transaction} />
+            ))}
+          </CardsContainer>
         ) : (
-          <>
-            <SummaryCard summary={summary} />
-            <Filters>
-              <DateFilter />
-              <Searchbar />
-            </Filters>
-            {isMobile ? (
-              <CardsContainer>
-                {transactions.map((transaction) => (
-                  <CardItem key={transaction.id} transaction={transaction} />
-                ))}
-              </CardsContainer>
-            ) : (
-              <TransactionsTable>
-                {transactions.map((transaction) => (
-                  <TableItem key={transaction.id} transaction={transaction} />
-                ))}
-              </TransactionsTable>
-            )}
-          </>
+          <TransactionsTable>
+            {transactions.map((transaction) => (
+              <TableItem key={transaction.id} transaction={transaction} />
+            ))}
+          </TransactionsTable>
         )}
       </Box>
     </>
@@ -84,8 +77,7 @@ export default function Home(props: HomeProps) {
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const filter = formatDate(new Date(), "yyyy-MM");
-  const transactions = await getTransactions(filter);
-  const summary = getSummary(transactions);
+  const { transactions, summary } = await getTransactions(filter);
   const dates = await getDates();
 
   return { props: { transactions, summary, dates } };
