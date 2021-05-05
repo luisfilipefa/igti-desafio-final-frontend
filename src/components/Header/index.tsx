@@ -6,15 +6,15 @@ import OpenModalButton from "../ActionButtons/OpenModalButton";
 import React from "react";
 
 export default function Header() {
-  const { colorMode } = useColorMode();
+  const { colorMode, toggleColorMode } = useColorMode();
   const isDarkMode = colorMode === "dark" ? true : false;
 
   return (
     <Box
-      h={{ sm: "8vh", md: "10vh" }}
+      h={{ sm: "8vh", lg: "8vh" }}
       w="100%"
       borderBottom="1px solid"
-      borderColor={isDarkMode ? "dark.purple" : ""}
+      borderColor={isDarkMode ? "dark.purple" : "dark.orange"}
     >
       <Flex
         h="100%"
@@ -37,6 +37,7 @@ export default function Header() {
           aria-label="Mudar modo de cor"
           icon={<Icon as={isDarkMode ? SunIcon : MoonIcon} />}
           bg="inherit"
+          onClick={toggleColorMode}
         />
       </Flex>
     </Box>

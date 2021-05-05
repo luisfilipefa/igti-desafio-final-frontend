@@ -42,6 +42,7 @@ const colors = {
     green: "#50fa7b",
     purple: "#bd93f9",
     red: "#ff5555",
+    orange: "#ffb86c",
   },
 };
 

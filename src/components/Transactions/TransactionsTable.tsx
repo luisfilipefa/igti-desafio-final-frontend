@@ -1,9 +1,9 @@
+import { Icon, useColorMode } from "@chakra-ui/react";
 import React, { ReactNode } from "react";
 import { Stack, Text } from "@chakra-ui/layout";
 import { Table, Tbody, Th, Thead, Tr } from "@chakra-ui/table";
 
 import { AiOutlineCalendar } from "react-icons/ai";
-import { Icon } from "@chakra-ui/react";
 
 interface TransactionsTableProps {
   children: ReactNode;
@@ -12,8 +12,11 @@ interface TransactionsTableProps {
 export default function TransactionsTable({
   children,
 }: TransactionsTableProps) {
+  const { colorMode } = useColorMode();
+  const isDarkMode = colorMode === "dark" ? true : false;
+
   return (
-    <Table colorScheme="gray" variant="striped">
+    <Table colorScheme={isDarkMode ? "gray" : "blackAlpha"} variant="striped">
       <Thead>
         <Tr>
           <Th>

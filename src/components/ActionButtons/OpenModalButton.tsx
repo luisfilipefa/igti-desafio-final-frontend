@@ -23,7 +23,8 @@ export default function OpenModalButton({
     <IconButton
       aria-label={mode === "editing" ? "Editar transação" : "Criar transação"}
       icon={<Icon as={AiOutlineEdit} />}
-      colorScheme="gray"
+      bg={isDarkMode ? "dark.blue" : "dark.orange"}
+      color={isDarkMode ? "dark.gray.50" : "dark.gray.900"}
       size={mode === "editing" ? "xs" : "md"}
       onClick={() => {
         mode === "editing" ? editingMode(transaction) : creatingMode();

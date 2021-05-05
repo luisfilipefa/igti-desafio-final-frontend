@@ -6,12 +6,15 @@ import {
   InputGroup,
   InputLeftElement,
   InputRightElement,
+  useColorMode,
 } from "@chakra-ui/react";
 import React, { useEffect } from "react";
 
 import { useTransactions } from "../../contexts/TransactionsContext";
 
 export default function Searchbar() {
+  const { colorMode } = useColorMode();
+  const isDarkMode = colorMode === "dark" ? true : false;
   const { search, setSearch, handleSearch, clearSearch } = useTransactions();
 
   useEffect(() => {
@@ -19,7 +22,7 @@ export default function Searchbar() {
   }, [search]);
 
   return (
-    <InputGroup>
+    <InputGroup borderColor={isDarkMode ? "dark.blue" : "dark.orange"}>
       <InputLeftElement
         pointerEvents="none"
         children={<Icon as={AiOutlineSearch} />}

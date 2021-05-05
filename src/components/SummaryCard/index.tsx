@@ -26,7 +26,7 @@ export default function SummaryCard({ summary }: SummaryProps) {
       templateRows={{ sm: "repeat(2, 1fr)", md: "1fr" }}
       gap={{ sm: 1, md: 5 }}
       alignItems="center"
-      bg={isDarkMode ? "dark.blue" : ""}
+      bg={isDarkMode ? "dark.blue" : "dark.orange"}
       w={{ sm: "100%", md: "80%" }}
       h={{ sm: "20vh", md: "10vh" }}
       borderBottomRadius="xl"
@@ -43,7 +43,13 @@ export default function SummaryCard({ summary }: SummaryProps) {
             title="Balanço"
             value={summary.balance}
             icon={FaBalanceScale}
-            color={summary.balance.charAt(0) === "-" ? "dark.red" : "inherit"}
+            color={
+              summary.balance.charAt(0) === "-"
+                ? "dark.red"
+                : isDarkMode
+                ? "inherit"
+                : "dark.gray.50"
+            }
           />
         )}
       </GridItem>

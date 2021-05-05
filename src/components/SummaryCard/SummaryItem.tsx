@@ -1,4 +1,4 @@
-import { Heading, Icon, Stack, Text } from "@chakra-ui/react";
+import { Heading, Icon, Stack, Text, useColorMode } from "@chakra-ui/react";
 
 import { IconType } from "react-icons/lib";
 import React from "react";
@@ -16,6 +16,9 @@ export default function SummaryItem({
   icon,
   color,
 }: SummaryItemProps) {
+  const { colorMode } = useColorMode();
+  const isDarkMode = colorMode === "dark" ? true : false;
+
   return (
     <Stack
       direction="row"
@@ -28,7 +31,9 @@ export default function SummaryItem({
     >
       <Icon as={icon} fontSize="20" color={color} />
       <Stack direction="column">
-        <Heading fontSize="xl">{title}</Heading>
+        <Heading fontSize="xl" color={isDarkMode ? "inherit" : "dark.gray.50"}>
+          {title}
+        </Heading>
         <Text fontSize="sm" color={color}>
           {value}
         </Text>
