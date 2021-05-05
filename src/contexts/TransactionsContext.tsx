@@ -1,13 +1,20 @@
+import { ApiTransaction, LocalTransaction, Summary } from "../types";
 import {
   Dispatch,
   ReactNode,
   SetStateAction,
   createContext,
   useContext,
+  useEffect,
   useState,
 } from "react";
-import { LocalTransaction, Summary } from "../types";
-import { getSummary, getTransactions } from "../services/api";
+import {
+  createTransaction,
+  deleteTransaction,
+  editTransaction,
+  getSummary,
+  getTransactions,
+} from "../services/api";
 
 import { formatDate } from "../utils/formatDate";
 
@@ -28,11 +35,15 @@ interface TransactionsContextData {
   setSearch: Dispatch<SetStateAction<string>>;
   isLoading: boolean;
   setIsLoading: Dispatch<SetStateAction<boolean>>;
+  updateTransactions: () => void;
+  updateSummary: () => void;
   handleSearch: () => void;
   handleFilter: () => void;
   clearSearch: () => void;
   clearFilter: () => void;
-  updateTransactions: () => void;
+  handleCreateTransaction: (transaction: ApiTransaction) => void;
+  handleEditTransaction: (id: string, transaction: ApiTransaction) => void;
+  handleDeleteTransaction: (id: string) => void;
 }
 
 const TransactionsContext = createContext({} as TransactionsContextData);
@@ -46,45 +57,65 @@ export function TransactionsProvider({ children }: TransactionsProviderProps) {
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
+  const updateTransactions = async () => {
+    const transactions_data = await getTransactions(filter);
+    setTransactions(transactions_data);
+  };
+
+  const updateSummary = () => {
+    const summary_data = getSummary(transactions);
+    setSummary(summary_data);
+  };
+
   const handleSearch = async () => {
     if (search !== "") {
       const filteredTransactions = transactions.filter((transaction) =>
         transaction.description.toLowerCase().includes(search.toLowerCase())
       );
-      const summary_data = getSummary(filteredTransactions);
       setTransactions(filteredTransactions);
-      setSummary(summary_data);
     }
   };
 
   const handleFilter = async () => {
     if (filter !== "") {
-      const transactions_data = await getTransactions(filter);
-      setTransactions(transactions_data);
-      const summary_data = getSummary(transactions_data);
-      setSummary(summary_data);
+      await updateTransactions();
     }
   };
 
-  const clearSearch = () => {
+  const clearSearch = async () => {
     setSearch("");
-    setTransactions(transactions);
-    const summary_data = getSummary(transactions);
-    setSummary(summary_data);
+    await updateTransactions();
   };
 
   const clearFilter = async () => {
     setFilter(defaultFilter);
-    const transactions_data = await getTransactions(filter);
-    setTransactions(transactions_data);
-    const summary_data = getSummary(transactions_data);
-    setSummary(summary_data);
+    await updateTransactions();
   };
 
-  const updateTransactions = async () => {
-    const transactions_res = await getTransactions(filter);
-    setTransactions(transactions_res);
+  const handleCreateTransaction = async (transaction: ApiTransaction) => {
+    const response = await createTransaction(transaction);
+    await updateTransactions();
+    console.log(response);
   };
+
+  const handleEditTransaction = async (
+    id: string,
+    transaction: ApiTransaction
+  ) => {
+    const response = await editTransaction(id, transaction);
+    await updateTransactions();
+    console.log(response);
+  };
+
+  const handleDeleteTransaction = async (id: string) => {
+    const response = await deleteTransaction(id);
+    await updateTransactions();
+    console.log(response);
+  };
+
+  useEffect(() => {
+    updateSummary();
+  }, [transactions]);
 
   return (
     <TransactionsContext.Provider
@@ -101,11 +132,15 @@ export function TransactionsProvider({ children }: TransactionsProviderProps) {
         setSearch,
         isLoading,
         setIsLoading,
+        updateTransactions,
+        updateSummary,
         handleSearch,
         handleFilter,
         clearSearch,
         clearFilter,
-        updateTransactions,
+        handleCreateTransaction,
+        handleEditTransaction,
+        handleDeleteTransaction,
       }}
     >
       {children}

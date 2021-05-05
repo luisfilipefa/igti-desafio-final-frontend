@@ -25,7 +25,7 @@ export default function Searchbar() {
         children={<Icon as={AiOutlineSearch} />}
       />
       <Input
-        placeholder="Filtrar..."
+        placeholder="Pesquisar..."
         value={search}
         onChange={(event) => setSearch(event.target.value)}
       />

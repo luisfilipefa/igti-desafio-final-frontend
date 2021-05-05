@@ -2,7 +2,7 @@ import { Flex, Icon, Stack, Text, useColorMode } from "@chakra-ui/react";
 
 import { AiOutlineCalendar } from "react-icons/ai";
 import { LocalTransaction } from "../../types";
-import OpenModalButton from "../OpenModalButton";
+import OpenModalButton from "../ActionButtons/OpenModalButton";
 import React from "react";
 
 interface CardItemProps {
@@ -24,7 +24,7 @@ export default function CardItem({ transaction }: CardItemProps) {
           <Text>{transaction.category}</Text>
           <Text
             fontSize="xs"
-            color={isDarkMode ? "gray.900" : ""}
+            color={isDarkMode ? "dark.gray.900" : ""}
             w="150px"
             overflow="hidden"
             whiteSpace="nowrap"

@@ -1,7 +1,7 @@
+import { Box, Text } from "@chakra-ui/layout";
 import { LocalTransaction, Summary } from "../types";
 import { getDates, getSummary, getTransactions } from "../services/api";
 
-import { Box } from "@chakra-ui/layout";
 import CardItem from "../components/Transactions/CardItem";
 import CardsContainer from "../components/Transactions/CardsContainer";
 import DateFilter from "../components/Filters/DateFilter";
@@ -11,6 +11,8 @@ import Head from "next/head";
 import Searchbar from "../components/Filters/Searchbar";
 import { Spinner } from "@chakra-ui/spinner";
 import SummaryCard from "../components/SummaryCard";
+import TableItem from "../components/Transactions/TableItem";
+import TransactionsTable from "../components/Transactions/TransactionsTable";
 import { formatDate } from "../utils/formatDate";
 import { useBreakpointValue } from "@chakra-ui/media-query";
 import { useEffect } from "react";
@@ -23,7 +25,7 @@ interface HomeProps {
 }
 
 export default function Home(props: HomeProps) {
-  const isMobile = useBreakpointValue({ sm: true, lg: false });
+  const isMobile = useBreakpointValue({ sm: true, md: false });
   const {
     transactions,
     setTransactions,
@@ -67,7 +69,11 @@ export default function Home(props: HomeProps) {
                 ))}
               </CardsContainer>
             ) : (
-              "TODO: Transactions Table"
+              <TransactionsTable>
+                {transactions.map((transaction) => (
+                  <TableItem key={transaction.id} transaction={transaction} />
+                ))}
+              </TransactionsTable>
             )}
           </>
         )}

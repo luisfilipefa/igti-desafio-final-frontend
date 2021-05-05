@@ -20,17 +20,17 @@ export default function SummaryCard({ summary }: SummaryProps) {
 
   return (
     <Grid
-      templateColumns={{ sm: "repeat(2, 1fr)" }}
-      templateRows={{ sm: "repeat(2, 1fr)" }}
+      templateColumns={{ sm: "repeat(2, 1fr)", md: "repeat(3, 1fr)" }}
+      templateRows={{ sm: "repeat(2, 1fr)", md: "1fr" }}
+      gap={{ md: 5 }}
       bg={isDarkMode ? "dark.blue" : ""}
-      h="25vh"
       w="100%"
       borderBottomRadius="xl"
       mx="auto"
       py="2"
       px="5"
     >
-      <GridItem colSpan={{ sm: 2 }} mx="auto">
+      <GridItem colSpan={{ sm: 2, md: 1 }} mx={{ sm: "auto", md: "0" }}>
         <SummaryItem
           title="Balanço"
           value={summary.balance}
@@ -38,7 +38,7 @@ export default function SummaryCard({ summary }: SummaryProps) {
           color={summary.balance.charAt(0) === "-" ? "dark.red" : "inherit"}
         />
       </GridItem>
-      <GridItem mr="auto">
+      <GridItem mr={{ sm: "auto", md: "0" }}>
         <SummaryItem
           title="Receitas"
           value={summary.totalIncome}
@@ -46,7 +46,7 @@ export default function SummaryCard({ summary }: SummaryProps) {
           color="dark.green"
         />
       </GridItem>
-      <GridItem ml="auto">
+      <GridItem ml={{ sm: "auto", md: "0" }}>
         <SummaryItem
           title="Despesas"
           value={summary.totalOutcome}

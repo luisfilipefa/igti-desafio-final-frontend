@@ -87,3 +87,13 @@ export const createTransaction = async (transaction: ApiTransaction) => {
     console.log(err);
   }
 };
+
+export const deleteTransaction = async (id: string) => {
+  try {
+    const response = await api.delete(`/${id}`);
+
+    return response.data;
+  } catch (err) {
+    console.log(err);
+  }
+};

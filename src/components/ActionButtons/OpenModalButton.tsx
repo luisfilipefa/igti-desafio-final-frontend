@@ -3,6 +3,7 @@ import Icon from "@chakra-ui/icon";
 import { IconButton } from "@chakra-ui/button";
 import { LocalTransaction } from "../../types";
 import React from "react";
+import { useColorMode } from "@chakra-ui/color-mode";
 import { useFormModal } from "../../contexts/FormModalContext";
 
 interface OpenModalButtonProps {
@@ -15,13 +16,14 @@ export default function OpenModalButton({
   transaction,
 }: OpenModalButtonProps) {
   const { editingMode, creatingMode } = useFormModal();
+  const { colorMode } = useColorMode();
+  const isDarkMode = colorMode === "dark" ? true : false;
 
   return (
     <IconButton
       aria-label={mode === "editing" ? "Editar transação" : "Criar transação"}
       icon={<Icon as={AiOutlineEdit} />}
-      bg={mode === "editing" ? "dark.gray.900" : "dark.green"}
-      color={mode === "creating" && "dark.gray.900"}
+      colorScheme="gray"
       size={mode === "editing" ? "xs" : "md"}
       onClick={() => {
         mode === "editing" ? editingMode(transaction) : creatingMode();

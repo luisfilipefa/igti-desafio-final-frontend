@@ -2,7 +2,7 @@ import { Box, Flex, Icon, IconButton, useColorMode } from "@chakra-ui/react";
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 
 import { GiPiggyBank } from "react-icons/gi";
-import OpenModalButton from "../OpenModalButton";
+import OpenModalButton from "../ActionButtons/OpenModalButton";
 import React from "react";
 
 export default function Header() {

@@ -24,7 +24,12 @@ interface FormValues {
 
 export default function Form() {
   const { disclosure, mode, transaction } = useFormModal();
-  const { updateTransactions } = useTransactions();
+  const {
+    handleEditTransaction,
+    handleCreateTransaction,
+    updateTransactions,
+    updateSummary,
+  } = useTransactions();
 
   const {
     register,
@@ -57,14 +62,13 @@ export default function Form() {
     };
 
     if (mode === "editing") {
-      const response = await editTransaction(transaction.id, data);
-      console.log(response);
+      await handleEditTransaction(transaction.id, data);
     } else {
-      const response = await createTransaction(data);
-      console.log(response);
+      await handleCreateTransaction(data);
     }
 
     updateTransactions();
+    updateSummary();
 
     disclosure.onClose();
   };
@@ -75,20 +79,20 @@ export default function Form() {
         <Input
           name="description"
           error={errors.description}
-          placeholder={mode === "creating" && "Descrição"}
+          placeholder="Descrição"
           {...register("description")}
         />
         <Input
           name="category"
           error={errors.category}
-          placeholder={mode === "creating" && "Categoria"}
+          placeholder="Categoria"
           {...register("category")}
         />
         <Stack direction="row" spacing="1">
           <Select
             name="type"
             error={errors.type}
-            placeholder={mode === "creating" && "Tipo"}
+            placeholder="Tipo"
             {...register("type")}
           >
             <option value="-" style={{ backgroundColor: "#282a36" }}>
@@ -108,7 +112,7 @@ export default function Form() {
         <NumberInput
           name="value"
           error={errors.value}
-          placeholder={mode === "creating" && "15.99"}
+          placeholder="15.99"
           {...register("value")}
         />
       </Stack>
