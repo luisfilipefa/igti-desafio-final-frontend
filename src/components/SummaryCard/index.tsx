@@ -28,7 +28,7 @@ export default function SummaryCard({ summary }: SummaryProps) {
       alignItems="center"
       bg={isDarkMode ? "dark.blue" : "dark.orange"}
       w={{ sm: "100%", md: "80%" }}
-      h={{ sm: "20vh", md: "10vh" }}
+      h={{ sm: "130px", md: "120px" }}
       borderBottomRadius="xl"
       mx="auto"
       px={{ sm: "2", md: "5" }}
